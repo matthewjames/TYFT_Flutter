@@ -17,10 +17,57 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
     new Position('Runner', null, 5.0)
   ];
 
-  var _totalTipOut = 0;
+  var _totalTipOut = 0, _netGratuity = 0;
+  final grossTipsController = new TextEditingController();
 
   String _getName(position){
     return _positions[position].name == null ? '' : _positions[position].name;
+  }
+
+  void _calculate(grossTipAmount){
+    // reset variables
+    _totalTipOut = 0;
+    _netGratuity = 0;
+
+    for (int i = 0; i < _positions.length; i++){
+      // multiply gross tip amount to tip percentage of each position
+      var tipAmount = (grossTipAmount * (_positions[i].tipPercentage * 0.01)).round();
+
+      // track total tip out amount
+      _totalTipOut += tipAmount;
+
+      // set tip amount for position
+      _positions[i].setTipOutAmount(tipAmount);
+    }
+
+    _netGratuity = grossTipAmount - _totalTipOut;
+
+    setState(() {
+
+    });
+  }
+
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Alert Dialog title"),
+          content: new Text("Alert Dialog body"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -35,45 +82,57 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
               Expanded(flex: 1, child: Text('Gross Tip Amount:')),
               Expanded(
                 flex: 1,
-                child: TextField(),
+                child: TextField(
+                  controller: grossTipsController,
+                  autofocus: false,),
               ),
             ],
           ),
-          Expanded(
-            child: ListView.builder(
-                itemBuilder: (context, position) {
-                  return Container(
-                    child: Card(
-                      child: Container(
-                        margin: EdgeInsets.all(16),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(child: Text(_positions[position].tipPercentage.toString() + '%')),
-                            Expanded(child: Text(_positions[position].title)),
-                            Expanded(child: Text(_getName(position))),
-                            Expanded(child: Text(_positions[position].tipOutAmount.toString(),
-                                    textAlign: TextAlign.end),
-                            ),
-                          ],
-                        ),
+          ListView.builder(
+            shrinkWrap: true,
+              itemBuilder: (context, position) {
+                return Container(
+                  child: Card(
+                    child: Container(
+                      margin: EdgeInsets.all(16),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(_positions[position].tipPercentage.toString() + '%')),
+                          Expanded(child: Text(_positions[position].title)),
+                          Expanded(child: Text(_getName(position))),
+                          Expanded(child: Text('\$' + _positions[position].tipOutAmount.toString(),
+                                  textAlign: TextAlign.end),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-                itemCount: _positions.length,
+                  ),
+                );
+              },
+              itemCount: _positions.length,
+          ),
+          Center(
+            child: FlatButton(
+              onPressed: (){
+                _showDialog();
+              },
+              child: Text('+ Quick Add'),
             ),
           ),
           Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Expanded(child: Text('Total Tip Out: -\$$_totalTipOut',
-                  textAlign: TextAlign.end,)),
+                  Container(
+                    padding: const EdgeInsets.only(right: 4.0),
+                      child: Text('Total Tip Out: -\$$_totalTipOut',
+                  textAlign: TextAlign.end,
+                  )),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  Expanded(child: Text('Net Gratuity:  \$$_totalTipOut',
+                  Expanded(child: Text('Net Gratuity:  \$$_netGratuity',
                       textAlign: TextAlign.end,
                       style: TextStyle(fontWeight: FontWeight.bold))),
                 ],
@@ -84,7 +143,10 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       child: RaisedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            _calculate(0);
+                            grossTipsController.text = '';
+                          },
                           child: Text('Clear')),
                     ),
                   ),
@@ -92,7 +154,9 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       child: RaisedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            _calculate(int.parse(grossTipsController.text));
+                          },
                           child: Text('Calculate')),
                     ),
                   ),
