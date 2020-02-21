@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tyft_f/Position.dart';
+import 'package:tyft_f/page_shift_log.dart';
 
 class TipOutCalculatorPage extends StatefulWidget {
   String title = 'Tip Out Calculator';
@@ -47,19 +48,54 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
     });
   }
 
-  void _showDialog() {
+  void _showPositionEditorDialog(title) {
     // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Alert Dialog title"),
-          content: new Text("Alert Dialog body"),
+          title: Text(title),
+          content: Container(
+            height: 100,
+            child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            autofocus: false,
+                            decoration: InputDecoration(
+                              labelText: 'Tip Out %',
+                            ),
+                            onChanged: (value){
+
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: DropdownButton(
+                            items: null,
+                            onChanged: null,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+            ),
+          ),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Close"),
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text("OK"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -74,8 +110,6 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: Column(
-//        crossAxisAlignment: CrossAxisAlignment.center,
-//        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Row(
             children: <Widget>[
@@ -114,28 +148,28 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
           Center(
             child: FlatButton(
               onPressed: (){
-                _showDialog();
+                _showPositionEditorDialog('Add a position');
               },
               child: Text('+ Quick Add'),
             ),
           ),
           Column(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.only(right: 4.0),
-                      child: Text('Total Tip Out: -\$$_totalTipOut',
+              Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 8.0),
+                child:
+                  Text('Total Tip Out: -\$$_totalTipOut',
                   textAlign: TextAlign.end,
-                  )),
-                ],
+                  ),
               ),
-              Row(
-                children: <Widget>[
-                  Expanded(child: Text('Net Gratuity:  \$$_netGratuity',
+              Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 8.0),
+                child:
+                  Text('Net Gratuity:  \$$_netGratuity',
                       textAlign: TextAlign.end,
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-                ],
+                      style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               Row(
                 children: <Widget>[
@@ -164,7 +198,11 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       child: RaisedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            setState(() {
+                              ShiftLogPage();
+                            });
+                          },
                           child: Text('Log Tips >')),
                     ),
                   )
