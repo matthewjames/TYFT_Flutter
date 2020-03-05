@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "858896260540",
+    "firebase_url": "https://tyft-445ae.firebaseio.com",
+    "project_id": "tyft-445ae",
+    "storage_bucket": "tyft-445ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:858896260540:android:b00fed25a37b813b6c5fb9",
+        "android_client_info": {
+          "package_name": "com.mattjamesdev.tyft_f"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "858896260540-l8ak1freue8ghd8he50eoookjtqk2jfi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7PRIf8Bxr2RjVbSv5VQQkzZcYtVybAc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "858896260540-l8ak1freue8ghd8he50eoookjtqk2jfi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

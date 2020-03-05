@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tyft_f/Position.dart';
+import 'package:tyft_f/main.dart';
+import 'package:tyft_f/page_create_shift_record.dart';
 import 'package:tyft_f/page_shift_log.dart';
 
 class TipOutCalculatorPage extends StatefulWidget {
@@ -199,9 +201,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: RaisedButton(
                           onPressed: (){
-                            setState(() {
-                              ShiftLogPage();
-                            });
+                            _openCreateShiftRecordPage(context);
                           },
                           child: Text('Log Tips >')),
                     ),
@@ -214,4 +214,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
       ),
     );
   }
+
+  _openCreateShiftRecordPage(BuildContext context) => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => CreateShiftRecordPage(title: "Create Shift Record",)));
 }
