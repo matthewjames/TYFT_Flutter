@@ -1,6 +1,6 @@
 class Position{
   double tipPercentage;
-  String title, name;
+  String title = "", name = "";
   int tipOutAmount;
 
   Position(this.title, this.name, this.tipPercentage){

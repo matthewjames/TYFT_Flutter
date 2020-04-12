@@ -5,9 +5,9 @@ import 'package:tyft_f/page_create_shift_record.dart';
 import 'package:tyft_f/page_shift_log.dart';
 
 class TipOutCalculatorPage extends StatefulWidget {
-  String title = 'Tip Out Calculator';
+  TipOutCalculatorPage({Key key, this.title}) : super(key: key);
 
-  TipOutCalculatorPage({Key key, title}) : super(key: key);
+  String title;
 
   @override
   _TipOutCalculatorPageState createState() => _TipOutCalculatorPageState();
@@ -15,13 +15,16 @@ class TipOutCalculatorPage extends StatefulWidget {
 
 class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
   var _positions = [
-    new Position('Busser', null, 20.0),
-    new Position('Bar', 'Micah', 7.5),
-    new Position('Runner', null, 5.0)
+    new Position("Busser", "", 20.0),
+    new Position("Bar", "Micah", 7.5),
+    new Position("Runner", "", 5.0)
   ];
 
   var _totalTipOut = 0, _netGratuity = 0;
+  var _shiftData;
   final grossTipsController = new TextEditingController();
+
+  var tipOutAmounts = {};
 
   String _getName(position){
     return _positions[position].name == null ? '' : _positions[position].name;
@@ -33,18 +36,34 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
     _netGratuity = 0;
 
     for (int i = 0; i < _positions.length; i++){
+      Position currentPosition = _positions[i];
+
       // multiply gross tip amount to tip percentage of each position
-      var tipAmount = (grossTipAmount * (_positions[i].tipPercentage * 0.01)).round();
+      var tipAmount = (grossTipAmount * (currentPosition.tipPercentage * 0.01)).round();
 
       // track total tip out amount
       _totalTipOut += tipAmount;
 
       // set tip amount for position
-      _positions[i].setTipOutAmount(tipAmount);
-    }
+      currentPosition.setTipOutAmount(tipAmount);
+
+      // add to output shiftData object
+      tipOutAmounts.addAll({
+            i.toString() : {
+              "position" : {
+                "title" : currentPosition.title,
+                "name" : currentPosition.name,
+                "tip_out_percentage" : currentPosition.tipPercentage.toString()
+              },
+              "tip_out_amount" : tipAmount.toString()
+              }
+            });
+      }
+
 
     _netGratuity = grossTipAmount - _totalTipOut;
 
+    print(tipOutAmounts);
     setState(() {
 
     });
@@ -201,6 +220,16 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: RaisedButton(
                           onPressed: (){
+                            _shiftData = {
+                              "uid" : "userID",
+                              "dateTime" : DateTime.now().toIso8601String().toString(),
+                              "tips" : {
+                                "tip_out_amounts" : tipOutAmounts,
+                                "take_home" : _netGratuity.toString(),
+                                "claimed" : "0"
+                              },
+                              "shift_note" : null
+                            };
                             _openCreateShiftRecordPage(context);
                           },
                           child: Text('Log Tips >')),
@@ -216,5 +245,5 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
   }
 
   _openCreateShiftRecordPage(BuildContext context) => Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => CreateShiftRecordPage(title: "Create Shift Record",)));
+      .push(MaterialPageRoute(builder: (context) => CreateShiftRecordPage(title: "Create Shift Record", data: _shiftData,)));
 }

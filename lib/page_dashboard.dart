@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DashboardPage extends StatefulWidget {
-  String title = 'Dashboard';
+  DashboardPage({Key key, this.title}) : super(key: key);
 
-  DashboardPage({Key key, title}) : super(key: key);
+  String title;
 
   @override
   _DashboardPageState createState() => _DashboardPageState();
@@ -17,7 +18,11 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Dashboard"),
+            ListTile(
+              title: Container(
+                child: SfCartesianChart()
+              )
+            )
           ],
         )));
   }

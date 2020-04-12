@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TYFT',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  final String title;
+  String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -34,11 +33,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  List<Widget> _pages = [ DashboardPage(), TipOutCalculatorPage(), ShiftLogPage()];
+  List<Widget> _pages = [DashboardPage(title: "Dashboard"), TipOutCalculatorPage(title: "Tip Out Calculator"), ShiftLogPage(title: "Shift Log")];
+  List<String> _titles = ["Dashboard", "Tip Out Calculator", "Shift Log"];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      widget.title = _titles[index];
     });
   }
 
