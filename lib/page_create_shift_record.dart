@@ -52,10 +52,11 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
 
     data.addAll(timeCard);
     data["shift_note"] = _notesTextController.text.toString();
+    data["tips"]["take_home"] = _takeHomeTipsTextController.text.toString();
 
     print(data);
-    _firebaseRef.child("temp2/uid").set(
-        data
+    _firebaseRef.child("temp2/uid/restaurant/shifts/" + _selectedDate.millisecondsSinceEpoch.toString()).set(
+        widget.data
     ).then((value) {
       final snackBar = SnackBar(
         content: Text('Record Saved!'),
@@ -93,7 +94,7 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map data = widget.data;
+    Map data = widget.data["shift_data"];
 
     print(data['tips']['take_home']);
     // Need to get user_id for firebase path variable.

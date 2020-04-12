@@ -221,14 +221,15 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                       child: RaisedButton(
                           onPressed: (){
                             _shiftData = {
-                              "uid" : "userID",
                               "dateTime" : DateTime.now().toIso8601String().toString(),
-                              "tips" : {
-                                "tip_out_amounts" : tipOutAmounts,
-                                "take_home" : _netGratuity.toString(),
-                                "claimed" : "0"
-                              },
-                              "shift_note" : null
+                              "shift_data" : {
+                                "tips" : {
+                                  "tip_out_amounts" : tipOutAmounts,
+                                  "take_home" : _netGratuity.toString(),
+                                  "claimed" : "0"
+                                },
+                                "shift_note" : ""
+                              }
                             };
                             _openCreateShiftRecordPage(context);
                           },

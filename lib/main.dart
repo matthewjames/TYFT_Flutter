@@ -34,12 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   List<Widget> _pages = [DashboardPage(title: "Dashboard"), TipOutCalculatorPage(title: "Tip Out Calculator"), ShiftLogPage(title: "Shift Log")];
-  List<String> _titles = ["Dashboard", "Tip Out Calculator", "Shift Log"];
+  static List<String> _titles = ["Dashboard", "Tip Out Calculator", "Shift Log"];
+  static String currentTitle = _titles[0];
 
   void _onItemTapped(int index) {
     setState(() {
+      currentTitle = _titles[index];
       _selectedIndex = index;
-      widget.title = _titles[index];
     });
   }
 
