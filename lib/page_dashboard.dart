@@ -50,7 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
         body: Column(
               mainAxisAlignment: MainAxisAlignment.center ,
               children: <Widget>[
-                Expanded(child: chart),
+                Expanded(child: Card(child: chart)),
               ]
         )
     );
