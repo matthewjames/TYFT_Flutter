@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
+import 'package:tyft_f/page_chart.dart';
 
 class DashboardPage extends StatefulWidget {
   DashboardPage({Key key, this.title}) : super(key: key);
@@ -13,7 +14,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   static DatabaseReference _firebaseRef = FirebaseDatabase.instance.reference();
-  Widget chart = FutureBuilder(
+  static Widget chart = FutureBuilder(
       future: _firebaseRef.child("temp2/uid/restaurant/shifts/").once(),
       builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
         List<Shift> data = new List<Shift>();
@@ -31,47 +32,89 @@ class _DashboardPageState extends State<DashboardPage> {
 
           print(data);
 
-          return Container(
-              height: 400,
-              child: Center(child: new SimpleTimeSeriesChart.withShiftData(data))
+          return Flex(
+              children: <Widget>[
+                Expanded(child: new SimpleTimeSeriesChart.withShiftData(data))
+              ]
           );
         }
-        return Container(
-            height: 400,
-            child: Center(child: new CircularProgressIndicator())
+        return Flex(
+            children: <Widget>[
+              Expanded(child: Center(child: new CircularProgressIndicator()))
+            ]
         );
       });
 
+  final List<Widget> _charts = [
+    new ChartPage(title: "Chart 1", chart: chart),
+    new ChartPage(title: "Chart 2", chart: chart),
+    new ChartPage(title: "Chart 3", chart: chart)
+  ];
+
+  final _pageController = PageController(
+    initialPage: 0
+  );
+  final _currentPageNotifier = ValueNotifier<int>(0);
+  final _boxHeight = 600.0;
 
   @override
   Widget build(BuildContext context) {
 
     return new Scaffold(
         body: Column(
-              mainAxisAlignment: MainAxisAlignment.center ,
+          children: <Widget>[
+            Stack(
               children: <Widget>[
-                Expanded(child: Card(
-                    child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text("Chart Title")
-                              ],
-                            ),
-                            chart,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text("More Information")
-                              ],
-                            )
-                          ],
-                        )))),
-              ]
+                _buildPageView()
+              ],
+            )
+          ],
         )
+    );
+  }
+
+  static _createChart(Widget chartWidget, String chartTitle){
+
+    return Container(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center ,
+            children: <Widget>[
+              Expanded(child: Card(
+                  child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(chartTitle)
+                            ],
+                          ),
+                          Container(
+                              child: chart
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text("More Information")
+                            ],
+                          )
+                        ],
+                      )))),
+            ]
+        )
+    );
+  }
+
+  _buildPageView() {
+    return Container(
+      height: _boxHeight,
+      child: PageView(
+          controller: _pageController,
+          children: _charts,
+          onPageChanged: (int index) {
+            _currentPageNotifier.value = index;
+          }),
     );
   }
 }
