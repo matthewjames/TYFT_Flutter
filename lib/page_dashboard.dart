@@ -13,7 +13,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   static DatabaseReference _firebaseRef = FirebaseDatabase.instance.reference();
-  var chart = FutureBuilder(
+  Widget chart = FutureBuilder(
       future: _firebaseRef.child("temp2/uid/restaurant/shifts/").once(),
       builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
         List<Shift> data = new List<Shift>();
@@ -28,28 +28,30 @@ class _DashboardPageState extends State<DashboardPage> {
             data.add(new Shift(date, tipAmount));
           });
           data.sort((a,b) => a.date.compareTo(b.date));
-          
+
           print(data);
 
-          return new SimpleTimeSeriesChart.withShiftData(data);
+          return Container(
+              height: 400,
+              child: Center(child: new SimpleTimeSeriesChart.withShiftData(data))
+          );
         }
-        return CircularProgressIndicator();
+        return Container(
+            height: 400,
+            child: Center(child: new CircularProgressIndicator())
+        );
       });
+
 
   @override
   Widget build(BuildContext context) {
 
     return new Scaffold(
-        body: ListView(
-            children: <Widget>[
-              Container(child: 
-                SizedBox(
-                    height: 200,
-                    width: 200,
-                    child: chart
-                )
-              )
-            ]
+        body: Column(
+              mainAxisAlignment: MainAxisAlignment.center ,
+              children: <Widget>[
+                Expanded(child: chart),
+              ]
         )
     );
   }
