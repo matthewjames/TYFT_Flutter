@@ -4,7 +4,6 @@ import 'package:table_calendar/table_calendar.dart';
 
 class ShiftLogPage extends StatefulWidget {
   String title = 'Shift Log';
-  final DatabaseReference _firebaseRef = FirebaseDatabase.instance.reference();
 
 
   ShiftLogPage({Key key, title}) : super(key: key);
@@ -72,20 +71,34 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
     });
   }
 
-  void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onVisibleDaysChanged');
-  }
+
 
   @override
   Widget build(BuildContext context) {
 
     return new Scaffold(
-        body: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[_buildTableCalendar(),
-              Expanded(child: _buildEventList()),
-            ]
+        body: SafeArea(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                            child: Container(
+                                child: _buildTableCalendar()
+                            )
+                        ),
+                      ],
+                    )
+                ),
+
+//              Expanded(child: _buildEventList()),
+              ]
+          ),
         ),
     );
   }
@@ -115,29 +128,34 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
 
           _events = data;
 
-          return TableCalendar(
-            calendarController: _calendarController,
-            events: _events,
-            startingDayOfWeek: StartingDayOfWeek.sunday,
-            availableCalendarFormats: const {
-              CalendarFormat.month: '',
+          return LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return TableCalendar(
+                rowHeight: constraints.maxHeight/6,
+                calendarController: _calendarController,
+                events: _events,
+                startingDayOfWeek: StartingDayOfWeek.sunday,
+                availableCalendarFormats: const {
+                  CalendarFormat.month: '',
+                },
+                calendarStyle: CalendarStyle(
+                  selectedColor: Colors.deepOrange[400],
+                  todayColor: Colors.deepOrange[200],
+                  markersColor: Colors.brown[700],
+                  outsideDaysVisible: false,
+                ),
+                headerStyle: HeaderStyle(
+                  centerHeaderTitle: true,
+                  formatButtonTextStyle:
+                  TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+                  formatButtonDecoration: BoxDecoration(
+                    color: Colors.deepOrange[400],
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                ),
+                onDaySelected: _onDaySelected,
+              );
             },
-            calendarStyle: CalendarStyle(
-              selectedColor: Colors.deepOrange[400],
-              todayColor: Colors.deepOrange[200],
-              markersColor: Colors.brown[700],
-              outsideDaysVisible: false,
-            ),
-            headerStyle: HeaderStyle(
-              centerHeaderTitle: true,
-              formatButtonTextStyle:
-              TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-              formatButtonDecoration: BoxDecoration(
-                color: Colors.deepOrange[400],
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            onDaySelected: _onDaySelected,
           );
         }
         return CircularProgressIndicator();

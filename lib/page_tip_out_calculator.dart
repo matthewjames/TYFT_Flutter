@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tyft_f/Position.dart';
-import 'package:tyft_f/main.dart';
 import 'package:tyft_f/page_create_shift_record.dart';
-import 'package:tyft_f/page_shift_log.dart';
+
 
 class TipOutCalculatorPage extends StatefulWidget {
   TipOutCalculatorPage({Key key, this.title}) : super(key: key);
@@ -148,17 +147,23 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
               itemBuilder: (context, position) {
                 return Container(
                   child: Card(
-                    child: Container(
-                      margin: EdgeInsets.all(16),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(child: Text(_positions[position].tipPercentage.toString() + '%')),
-                          Expanded(child: Text(_positions[position].title)),
-                          Expanded(child: Text(_getName(position))),
-                          Expanded(child: Text('\$' + _positions[position].tipOutAmount.toString(),
-                                  textAlign: TextAlign.end),
-                          ),
-                        ],
+                    child: InkWell(
+                      splashColor: Colors.black12.withAlpha(30),
+                      onTap: (){
+                        print("Position " + position.toString() + " clicked!");
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(16),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(child: Text(_positions[position].tipPercentage.toString() + '%')),
+                            Expanded(child: Text(_positions[position].title)),
+                            Expanded(child: Text(_getName(position))),
+                            Expanded(child: Text('\$' + _positions[position].tipOutAmount.toString(),
+                                    textAlign: TextAlign.end),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
