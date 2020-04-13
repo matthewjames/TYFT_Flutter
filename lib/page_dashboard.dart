@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:tyft_f/page_chart.dart';
+import 'package:page_view_indicators/page_view_indicators.dart';
 
 class DashboardPage extends StatefulWidget {
   DashboardPage({Key key, this.title}) : super(key: key);
@@ -35,13 +36,13 @@ class _DashboardPageState extends State<DashboardPage> {
           return Flex(
               children: <Widget>[
                 Expanded(child: new SimpleTimeSeriesChart.withShiftData(data))
-              ]
+              ], direction: Axis.horizontal,
           );
         }
         return Flex(
             children: <Widget>[
               Expanded(child: Center(child: new CircularProgressIndicator()))
-            ]
+            ], direction: Axis.horizontal,
         );
       });
 
@@ -55,53 +56,35 @@ class _DashboardPageState extends State<DashboardPage> {
     initialPage: 0
   );
   final _currentPageNotifier = ValueNotifier<int>(0);
-  final _boxHeight = 600.0;
+  final _boxHeight = 700.0;
 
   @override
   Widget build(BuildContext context) {
 
     return new Scaffold(
-        body: Column(
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                _buildPageView()
-              ],
-            )
-          ],
-        )
-    );
-  }
-
-  static _createChart(Widget chartWidget, String chartTitle){
-
-    return Container(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center ,
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(child: Card(
-                  child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      child: Stack(
                         children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(chartTitle)
-                            ],
-                          ),
-                          Container(
-                              child: chart
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text("More Information")
-                            ],
-                          )
+                          _buildPageView(),
+                          _buildCircleIndicator()
                         ],
-                      )))),
-            ]
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         )
     );
   }
@@ -117,7 +100,24 @@ class _DashboardPageState extends State<DashboardPage> {
           }),
     );
   }
+
+  _buildCircleIndicator() {
+    return Positioned(
+      left: 0.0,
+      right: 0.0,
+      bottom: 0.0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CirclePageIndicator(
+          itemCount: _charts.length,
+          currentPageNotifier: _currentPageNotifier,
+        ),
+      ),
+    );
+  }
 }
+
+
 
 class SimpleTimeSeriesChart extends StatelessWidget {
   final List<charts.Series> seriesList;
