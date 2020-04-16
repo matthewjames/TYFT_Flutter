@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class CreateShiftRecordPage extends StatefulWidget {
   CreateShiftRecordPage({Key key, this.title, this.data}) : super(key: key);
@@ -15,13 +17,10 @@ class CreateShiftRecordPage extends StatefulWidget {
 
 class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
   final DatabaseReference _firebaseRef = FirebaseDatabase.instance.reference();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-//  Future<FirebaseUser> user = await _firebaseAuth.currentUser();
-  static DateTime _selectedDate = new DateTime.now();
+  static DateTime now = DateTime.now();
+  static DateTime _selectedDate = _getBeginningOfDay(now);
   String path;
 
-
-  final _dateTextController = new TextEditingController(text: _selectedDate.toIso8601String());
   final _takeHomeTipsTextController = new TextEditingController();
   final _claimedTipsTextController = new TextEditingController();
   final _clockInTextController = new TextEditingController();
@@ -30,23 +29,32 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
   final _notesTextController = new TextEditingController();
 
   Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2018),
-      lastDate: DateTime(2030));
-    if (picked != null && picked != _selectedDate)
+    final DateTime date = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2018),
+        lastDate: DateTime(2030));
+    if (date != null && date != _selectedDate) print(date.toIso8601String());
+    DateTime picked = date.toLocal();
+    print(picked.toIso8601String());
     setState(() {
       _selectedDate = picked;
     });
   }
 
-  _saveTipRecordToFirebase(Map data){
+  _saveTipRecordToFirebase(Map data) {
     var timeCard = {
-      "time_card" : {
-        "clock_in" : _clockInTextController.text.toString(),
-        "clock_out" : _clockOutTextController.text.toString(),
-        "break_time" : _breakTimeTextController.text.toString()
+      "time_card": {
+        "clock_in": _clockInTextController.text.toString() == ""
+            ? "0:00 AM"
+            : _clockInTextController.text.toString(),
+        "clock_out": _clockOutTextController.text.toString() == ""
+            ? "0:00 AM"
+            : _clockOutTextController.text.toString(),
+        "break_time": _breakTimeTextController.text.toString() == ""
+            ? "0.0"
+            : _breakTimeTextController.text.toString(),
+        "total_hours": "0.0"
       }
     };
 
@@ -55,9 +63,11 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
     data["tips"]["take_home"] = _takeHomeTipsTextController.text.toString();
 
     print(data);
-    _firebaseRef.child("temp2/uid/restaurant/shifts/" + _selectedDate.millisecondsSinceEpoch.toString()).set(
-        widget.data
-    ).then((value) {
+    _firebaseRef
+        .child("temp2/uid/restaurant/shifts/" +
+            _selectedDate.millisecondsSinceEpoch.toString())
+        .set(widget.data)
+        .then((value) {
       final snackBar = SnackBar(
         content: Text('Record Saved!'),
         action: SnackBarAction(
@@ -88,27 +98,26 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
 
       print(e);
     });
-
-
   }
 
   @override
   Widget build(BuildContext context) {
+    var buttonBoxSize = 85.0;
     Map data = widget.data["shift_data"];
 
-    print(data['tips']['take_home']);
+    print(_selectedDate.toIso8601String());
     // Need to get user_id for firebase path variable.
-
 
 //    path = "users/" + _firebaseRef.
 
-    if(data['tips']['take_home'] != 0) {
+    if (data['tips']['take_home'] != '0') {
       _takeHomeTipsTextController.text = data['tips']['take_home'].toString();
     }
 
     return Scaffold(
-      body: ListView(
-          children: <Widget>[Container(
+      body: ListView(children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -118,30 +127,40 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Date: ",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(
+                        DateFormat.yMMMMd("en_US").format(_selectedDate),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24.0,
+                      )
+                    ),
                   ),
-                  Text(_selectedDate.toIso8601String()),
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 4.0,
                     ),
-                    child: RawMaterialButton(
-                      child: Icon(Icons.calendar_today),
-                      shape: CircleBorder(),
-                      onPressed: (){
-                        _selectDate(context);
-                      },
+                    child: Container(
+                      child: Ink(
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side: BorderSide(
+                                    width: 2.0, color: Colors.black12))),
+                        child: IconButton(
+                          icon: Icon(MdiIcons.calendarMonth),
+                          tooltip: 'Open date picker',
+                          onPressed: () {
+                            _selectDate(context);
+                          },
+                        ),
+                      ),
                     ),
                   )
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    top: 8.0,
-                    left: 8.0),
-                child: Text("Tips",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                child:
+                    Text("Tips", style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               Padding(
                 padding: const EdgeInsets.only(
@@ -153,69 +172,44 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 8.0,
-                  right: 8.0
-                ),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text("Take Home: "),
                     Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
                         child: TextField(
                           controller: _takeHomeTipsTextController,
-                        )
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Take Home',
+                          ),
+                        ),
+                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 4.0
-                      ),
-                      child: RawMaterialButton(
-                        child: Icon(Icons.grid_on),
-                        shape: CircleBorder(),
-                        onPressed: (){
-
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 8.0,
-                  right: 8.0
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Claimed: "),
                     Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
                         child: TextField(
                           controller: _claimedTipsTextController,
-                        )
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Claimed',
+                          ),
+                        ),
+                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 4.0
-                      ),
-                      child: RawMaterialButton(
-                        child: Icon(Icons.grid_on),
-                        shape: CircleBorder(),
-                        onPressed: (){
-
-                        },
-                      ),
-                    )
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    top: 8.0,
-                    left: 8.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 8.0),
                 child: Text("Time Card",
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
@@ -229,75 +223,64 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0
-                ),
+                padding: const EdgeInsets.only(top: 4.0, left: 8.0, right: 8.0, bottom: 4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                        flex: 1,
-                        child: Text("Clock-In: ")
-                    ),
-                    Expanded(
-                      flex: 1,
-                        child: TextField(
-                          controller: _clockInTextController,
-                        )
+                      child: TextField(
+                        controller: _clockInTextController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Clock-In Time',
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0
-                ),
+                padding: const EdgeInsets.only(top: 4.0, left: 8.0, right: 8.0, bottom: 4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                        flex: 1,
-                        child: Text("Clock-Out: ")
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: TextField(
-                          controller: _clockOutTextController,
-                        )
+                      child: TextField(
+                        controller: _clockOutTextController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Clock-Out Time',
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0
-                ),
+                padding: const EdgeInsets.only(top: 4.0, left: 8.0, right: 8.0, bottom: 4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                        flex: 1,
-                        child: Text("Break Time: ")
-                    ),
-                    Expanded(
-                      flex: 1,
-                        child: TextField(
-                          controller: _breakTimeTextController,
-                        )
+                      child: TextField(
+                        controller: _breakTimeTextController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Break Time',
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    top: 8.0,
-                    left: 8.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 8.0),
                 child: Text("Notes",
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
@@ -311,53 +294,107 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    left: 8.0,
-                    right: 8.0
-                ),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      flex: 1,
-                        child: TextField(
-                          maxLines: null,
-                          controller: _notesTextController,
-                        )
+                      child: TextField(
+                        maxLines: null,
+                        controller: _notesTextController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(
-                      child: Text("Cancel"),
-                      onPressed: (){
-                        Navigator.of(context).pop();
-                      },
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        height: buttonBoxSize,
+                        width: buttonBoxSize,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Ink(
+                          decoration: ShapeDecoration(
+                              color: Colors.red[100],
+                              shape: CircleBorder(
+                                  side: BorderSide(
+                                      color: Colors.red[700],
+                                      width: 3.0
+                                  )
+                              )
+                          ),
+                          child: IconButton(
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                            icon: Icon(MdiIcons.trashCanOutline,
+                              size: 30.0,),
+                            tooltip: 'Cancel',
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(
-                      child: Text("Save"),
-                      onPressed: (){
-                        _saveTipRecordToFirebase(data);
-                      },
+                    Expanded(
+                      child: Container(
+                        height: buttonBoxSize,
+                        width: buttonBoxSize,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Ink(
+                          decoration: ShapeDecoration(
+                              color: Colors.green[100],
+                              shape: CircleBorder(
+                                  side: BorderSide(
+                                      color: Colors.green[700],
+                                      width: 3.0
+                                  )
+                              )
+                          ),
+                          child: IconButton(
+                            onPressed: (){
+                              _saveTipRecordToFirebase(data);
+                            },
+                            icon: Icon(MdiIcons.filePlusOutline,
+                              size: 30.0,),
+                            tooltip: 'Save',
+                          ),
+                        ),
+                      ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
             ],
           ),
         ),
-      ]
-      ),
+      ]),
     );
+  }
+
+  static _getBeginningOfDay(DateTime date) {
+    var dayOfYear = date.day;
+    var millisInADay = Duration(days: 1).inMilliseconds; // 86400000
+    var millisInHalfADay = (millisInADay ~/ 2);
+    var millisDayOfYear = (dayOfYear * millisInADay);
+    var millisecondsSinceEpoch =
+        DateTime(DateTime.now().year).millisecondsSinceEpoch;
+
+    print('_getBeginningOfDay: ' +
+        new DateTime(date.year, date.month, date.day).toIso8601String());
+
+//    print('_getBeginningOfDay: ' + DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch + millisDayOfYear).toIso8601String()
+//        + ' '
+//        + (millisecondsSinceEpoch + millisDayOfYear).toString());
+
+    return new DateTime(date.year, date.month, date.day);
   }
 }

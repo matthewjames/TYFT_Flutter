@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tyft_f/Position.dart';
 import 'package:tyft_f/page_create_shift_record.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 
 class TipOutCalculatorPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class TipOutCalculatorPage extends StatefulWidget {
 class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
   var _positions = [
     new Position("Busser", "", 20.0),
-    new Position("Bar", "Micah", 7.5),
+    new Position("Bar", "", 7.5),
     new Position("Runner", "", 5.0)
   ];
 
@@ -68,7 +69,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
     });
   }
 
-  void _showPositionEditorDialog(title) {
+  _showPositionEditorDialog(title) {
     // flutter defined function
     showDialog(
       context: context,
@@ -128,124 +129,238 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: Column(
-        children: <Widget>[
-          Row(
+    var buttonBoxSize = 85.0;
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(flex: 1, child: Text('Gross Tip Amount:')),
-              Expanded(
-                flex: 1,
-                child: TextField(
-                  controller: grossTipsController,
-                  autofocus: false,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text('Gross Tip Payout',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold
+                    )),
+                  )
+                ],
               ),
-            ],
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-              itemBuilder: (context, position) {
-                return Container(
-                  child: Card(
-                    child: InkWell(
-                      splashColor: Colors.black12.withAlpha(30),
-                      onTap: (){
-                        print("Position " + position.toString() + " clicked!");
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(16),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(child: Text(_positions[position].tipPercentage.toString() + '%')),
-                            Expanded(child: Text(_positions[position].title)),
-                            Expanded(child: Text(_getName(position))),
-                            Expanded(child: Text('\$' + _positions[position].tipOutAmount.toString(),
-                                    textAlign: TextAlign.end),
-                            ),
-                          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 75.0, right: 75.0, top: 8.0, bottom: 16.0),
+                      child: TextField(
+                        controller: grossTipsController,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold
+                        ),
+                        decoration: InputDecoration(
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(),
                         ),
                       ),
                     ),
                   ),
-                );
-              },
-              itemCount: _positions.length,
-          ),
-          Center(
-            child: FlatButton(
-              onPressed: (){
-                _showPositionEditorDialog('Add a position');
-              },
-              child: Text('+ Quick Add'),
-            ),
-          ),
-          Column(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 8.0),
-                child:
-                  Text('Total Tip Out: -\$$_totalTipOut',
-                  textAlign: TextAlign.end,
-                  ),
-              ),
-              Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 8.0),
-                child:
-                  Text('Net Gratuity:  \$$_netGratuity',
-                      textAlign: TextAlign.end,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                          onPressed: (){
-                            _calculate(0);
-                            grossTipsController.text = '';
-                          },
-                          child: Text('Clear')),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                          onPressed: (){
-                            _calculate(int.parse(grossTipsController.text));
-                          },
-                          child: Text('Calculate')),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RaisedButton(
-                          onPressed: (){
-                            _shiftData = {
-                              "dateTime" : DateTime.now().toIso8601String().toString(),
-                              "shift_data" : {
-                                "tips" : {
-                                  "tip_out_amounts" : tipOutAmounts,
-                                  "take_home" : _netGratuity.toString(),
-                                  "claimed" : "0"
-                                },
-                                "shift_note" : ""
-                              }
-                            };
-                            _openCreateShiftRecordPage(context);
-                          },
-                          child: Text('Log Tips >')),
-                    ),
-                  )
                 ],
-              )
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                  itemBuilder: (context, position) {
+                    return Padding(
+                      padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                      child: Card(
+                        child: InkWell(
+                          splashColor: Colors.black12.withAlpha(30),
+                          onTap: (){
+                            print("Position " + position.toString() + " clicked!");
+                          },
+                          child: Container(
+                            margin: EdgeInsets.all(16),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: Text(_positions[position].tipPercentage.toString() + '%',
+                                    style: TextStyle(
+                                      fontSize: 18.0
+                                    ),)
+                                ),
+                                Expanded(child: Text(_positions[position].title,
+                                  style: TextStyle(
+                                      fontSize: 18.0
+                                  ),)),
+                                Expanded(child: Text(_getName(position),
+                                  style: TextStyle(
+                                      fontSize: 18.0
+                                  ),)),
+                                Expanded(child: Text('\$' + _positions[position].tipOutAmount.toString(),
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          fontSize: 18.0
+                                        ),),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: _positions.length,
+              ),
+              Center(
+                child: OutlineButton(
+                  onPressed: (){
+                    _showPositionEditorDialog('Add a position');
+                  },
+                  child: Text('+ Quick Add'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 32.0, left: 32.0, top: 8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.all(4.0),
+                        child:
+                          Text('Total Tip Out: -\$$_totalTipOut',
+                          textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontSize: 18.0
+                              )
+                          ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.all(4.0),
+                        child:
+                          Text('Net Gratuity:  \$$_netGratuity',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                fontSize: 18.0
+                              )
+                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                height: buttonBoxSize,
+                                width: buttonBoxSize,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Ink(
+                                  decoration: ShapeDecoration(
+                                    color: Colors.yellow[100],
+                                    shape: CircleBorder(
+                                      side: BorderSide(
+                                        color: Colors.yellow[700],
+                                        width: 3.0
+                                      )
+                                    )
+                                  ),
+                                  child: IconButton(
+                                      onPressed: (){
+                                        _calculate(0);
+                                        grossTipsController.text = '';
+                                      },
+                                      icon: Icon(Icons.refresh,
+                                      size: 30.0,),
+                                    tooltip: 'Clear all entries and reset calculator',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: buttonBoxSize,
+                                width: buttonBoxSize,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Ink(
+                                  decoration: ShapeDecoration(
+                                    color: Colors.orange[100],
+                                      shape: CircleBorder(
+                                          side: BorderSide(
+                                              color: Colors.orange[300],
+                                              width: 3.0
+                                          )
+                                      )
+                                  ),
+                                  child: IconButton(
+                                    onPressed: (){
+                                      _calculate(int.parse(grossTipsController.text));
+                                    },
+                                    icon: Icon(
+                                        MdiIcons.calculator,
+                                    size: 30.0),
+                                    tooltip: 'Calculate tip outs',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: buttonBoxSize,
+                                width: buttonBoxSize,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Ink(
+                                  decoration: ShapeDecoration(
+                                      color: Colors.green[100],
+                                      shape: CircleBorder(
+                                          side: BorderSide(
+                                              color: Colors.green[400],
+                                              width: 3.0
+                                          )
+                                      )
+                                  ),
+                                  child: IconButton(
+                                    onPressed: (){
+                                      _shiftData = {
+                                        "dateTime" : DateTime.now().toIso8601String(),
+                                        "shift_data" : {
+                                          "tips" : {
+                                            "tip_out_amounts" : tipOutAmounts,
+                                            "take_home" : _netGratuity.toString(),
+                                            "claimed" : "0"
+                                          },
+                                          "shift_note" : ""
+                                        }
+                                      };
+
+                                      print('TipOutCalcuPage: data sent to CreateShiftRecordPage: \n' + _shiftData.toString());
+                                      _openCreateShiftRecordPage(context);
+                                    },
+                                    icon: Icon(
+                                        MdiIcons.fileDocumentEditOutline,
+                                    size: 30.0,),
+                                    tooltip: 'Log tip information',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:tyft_f/page_create_shift_record.dart';
 import 'package:tyft_f/page_dashboard.dart';
 import 'package:tyft_f/page_profile.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: MyHomePage(title: 'TYFT'),
     );
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
         bottomNavigationBar: BottomNavigationBar(
           items: _items,
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
+          selectedItemColor: Colors.orange[300],
           unselectedItemColor: Colors.black26,
           onTap: _onItemTapped,
         ),
@@ -76,11 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
     title: Text('Home'),
     ),
     BottomNavigationBarItem(
-    icon: Icon(Icons.grid_on),
+    icon: Icon(MdiIcons.calculatorVariant),
     title: Text('Calculator'),
     ),
     BottomNavigationBarItem(
-    icon: Icon(Icons.calendar_today),
+    icon: Icon(MdiIcons.calendarText),
     title: Text('Shift Log'),
     ),
     BottomNavigationBarItem(

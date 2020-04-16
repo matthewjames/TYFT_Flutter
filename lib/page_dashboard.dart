@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:tyft_f/page_chart.dart';
 import 'package:page_view_indicators/page_view_indicators.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPage extends StatefulWidget {
   DashboardPage({Key key, this.title}) : super(key: key);
@@ -37,6 +38,15 @@ class _DashboardPageState extends State<DashboardPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Text(DateFormat.yMMMMEEEEd("en_US").format(DateTime.now()),
+                textAlign: TextAlign.center,
+                style:TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0
+                ),),
+              ),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
