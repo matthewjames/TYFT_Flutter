@@ -144,7 +144,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text('Gross Tip Payout',
+                    child: Text('Total Tips',
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold
@@ -246,7 +246,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.all(4.0),
                         child:
-                          Text('Net Gratuity:  \$$_netGratuity',
+                          Text('Take Home:  \$$_netGratuity',
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,

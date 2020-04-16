@@ -23,9 +23,6 @@ class _ChartPageState extends State<ChartPage> {
   @override
   Widget build(BuildContext context) {
     Widget chart = _buildChart();
-    setState(() {
-      _average = _getAverageTipsYTD(_tipData);
-    });
 
     return Container(
       padding: EdgeInsets.only(right: 16.0, left: 16.0, bottom: 24.0, top: 16.0),
@@ -88,6 +85,7 @@ class _ChartPageState extends State<ChartPage> {
 
             print(data);
             _tipData = data;
+            _average = _getAverageTipsYTD(_tipData);
 
             return Flex(
               children: <Widget>[
