@@ -33,6 +33,9 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
 
     return new Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

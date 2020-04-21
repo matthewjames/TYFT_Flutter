@@ -132,6 +132,9 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
     var buttonBoxSize = 85.0;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Center(
@@ -332,7 +335,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                   child: IconButton(
                                     onPressed: (){
                                       _shiftData = {
-                                        "dateTime" : DateTime.now().toIso8601String(),
+                                        "date_time_created" : DateTime.now().toIso8601String(),
                                         "shift_data" : {
                                           "tips" : {
                                             "tip_out_amounts" : tipOutAmounts,

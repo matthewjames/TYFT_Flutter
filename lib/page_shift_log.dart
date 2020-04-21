@@ -67,8 +67,12 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
   Widget build(BuildContext context) {
 
     return new Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
         body: Column(
               mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(child: _buildTableCalendar())
               ]
@@ -113,10 +117,23 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
                       CalendarFormat.month: '',
                     },
                     calendarStyle: CalendarStyle(
+                      markersAlignment: Alignment.center,
                       outsideDaysVisible: false,
+                    ),
+                    daysOfWeekStyle: DaysOfWeekStyle(
+                      weekendStyle: TextStyle(
+                          fontSize: 16.0
+                      ),
+                      weekdayStyle: TextStyle(
+                        fontSize: 16.0
+                      )
                     ),
                     headerStyle: HeaderStyle(
                       centerHeaderTitle: true,
+                      titleTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0
+                      ),
                       formatButtonTextStyle:
                       TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
                       formatButtonDecoration: BoxDecoration(
@@ -133,6 +150,9 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
                           height: 100,
                           child: Text(
                             '${date.day}',
+                            style: TextStyle(
+                              fontSize: 16.0
+                            ),
                           ),
                         );
                       },
@@ -144,6 +164,9 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
                             height: 100,
                             child: Text(
                               '${date.day}',
+                              style: TextStyle(
+                                  fontSize: 16.0
+                              ),
                             ),
                         );
                       },
@@ -157,7 +180,7 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
                           child: Text(
                             '${date.day}',
                             style: TextStyle().copyWith(
-                                fontSize: 14.0,
+                                fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.orange[600]),
                           ),

@@ -115,6 +115,10 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+      ),
       body: ListView(children: <Widget>[
         Container(
           padding: EdgeInsets.all(16.0),

@@ -24,6 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
       body: Center(child:
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
