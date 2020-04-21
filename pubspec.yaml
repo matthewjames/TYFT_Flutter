@@ -51,6 +51,11 @@ dev_dependencies:
       url: git://github.com/ayham95/Custom-navigator.git
       ref: master
 
+  expandable:
+    git:
+      url: git://github.com/aryzhov/flutter-expandable.git
+      ref: master
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

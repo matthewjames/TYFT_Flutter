@@ -2,6 +2,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:tyft_f/Position.dart';
+import 'package:tyft_f/components/widget_time_card_info.dart';
+import 'package:tyft_f/components/widget_tip_out_info.dart';
 
 class ShiftLogPage extends StatefulWidget {
   String title = 'Shift Log';
@@ -11,34 +14,6 @@ class ShiftLogPage extends StatefulWidget {
 
   @override
   _ShiftLogPageState createState() => _ShiftLogPageState();
-
-//  readData() {
-//    Map<DateTime, List> data = {};
-//
-//    _firebaseRef.child("temp2/uid/restaurant/shifts/").once().then((dataSnapshot){
-//      dataSnapshot.value.forEach((key, value){
-//        print(value);
-////        print("Date: " + value['dateTime'] + " Tip amount: " + value['shift_data']['tips']['take_home'] + "\n");
-//        int tipAmount = int.parse(value['shift_data']['tips']['take_home']);
-////        String dateTime = value['dateTime'];
-//        DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(key));
-//        List tipList = [];
-//        // if a date has already been added, add tip amount to existing list
-//        if(data.containsKey(date)){
-//          tipList.add(data[date][0]);
-//        }
-//
-//        tipList.add("\$" + tipAmount.toString());
-//        data[date] = tipList;
-//
-//      });
-//    }).catchError((e) {
-//      print("Failed to load tip records");
-//      print(e);
-//    });
-//
-//    return data;
-//  }
 }
 
 class _ShiftLogPageState extends State<ShiftLogPage> {
@@ -74,10 +49,11 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
 //      print(DateTime.fromMillisecondsSinceEpoch(int.parse(key)).toIso8601String() + ' ' + key.toString());
 //    });
     Map shiftRecord = _values[day.millisecondsSinceEpoch.toString()];
-    Widget tipOutListView = _buildTipOutListView(day, _getTipOutAmounts(shiftRecord));
+//    Widget tipOutListView = _buildTipOutListView(day, _getTipOutAmounts(shiftRecord));
 
     if(_values.containsKey(day.millisecondsSinceEpoch.toString())){
-      _showShiftRecordDialog(day, shiftRecord, tipOutListView);
+      print("shiftRecord being passed to _showShiftRecordDialog: " + shiftRecord.toString());
+      _showShiftRecordDialog(day, shiftRecord);
     }
 
     setState(() {
@@ -207,11 +183,34 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
     );
   }
 
-  _showShiftRecordDialog(DateTime day, shiftRecord, tipOutListView) {
+  _showShiftRecordDialog(DateTime day, shiftRecord) {
     String title = DateFormat.yMMMMd("en_US").format(day);
     print('shiftRecordDialog: \n' + shiftRecord.toString());
     String takeHomeTips = shiftRecord['shift_data']['tips']['take_home'];
     print('Take Home Tips: ' + takeHomeTips);
+
+    Widget tipInfoWidget;
+    List tipOutAmounts = _getTipOutAmounts(shiftRecord);
+    if(tipOutAmounts != null){
+      tipInfoWidget = TipOutInfoWidget(
+        tipOutAmounts:  tipOutAmounts,
+        takeHomeTipAmount: shiftRecord['shift_data']['tips']['take_home'],
+      );
+    } else {
+      tipInfoWidget = Padding(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+        child: Row(
+          children: <Widget>[
+            Text("Take Home Tips: "),
+            Text("\$" + takeHomeTips,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green
+              ),)
+          ],
+        ),
+      );
+    }
 
 
     // flutter defined function
@@ -240,37 +239,10 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
                       height: 2,
                       thickness: 2,
                     ),
-                    Card(
-                      child: ExpansionTile(
-                        title: Text('Take Home Tips: \$$takeHomeTips',
-                            style: TextStyle(
-                                fontSize: 15.0
-                            )),
-                        children: <Widget>[
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                child: tipOutListView
-                              ),
-                            ],
-                          )
-                        ],
+                      tipInfoWidget,
+                      TimeCardInfoWidget(
+                        timeCardData: shiftRecord['shift_data']['time_card'],
                       ),
-                    ),
-                    Card(
-                      child: ExpansionTile(
-                        title: Text('Time Card',
-                            style: TextStyle(
-                                fontSize: 15.0
-                            )),
-                        children: <Widget>[
-                          Text("More Text"),
-                          Text("More Text"),
-                          Text("More Text")
-                        ],
-                      ),
-                    ),
                     Row(
                       children: <Widget>[
                         Text('Shift Stats',
@@ -284,25 +256,40 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
                       height: 2,
                       thickness: 2,
                     ),
-                    Row(
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Row(
+                          children: <Widget>[
+                            Expanded(
+                                flex: 7,
+                                child: Text('Total Earned:')),
+                            Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 4.0),
+                                  child: Text('\$---',
+                                  textAlign: TextAlign.end,),
+                                )
+                            ),
+                          ],
+                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Row(
                         children: <Widget>[
                           Expanded(
                               flex: 7,
-                              child: Text('Total Earned:')),
+                              child: Text('Hourly Rate:')),
                           Expanded(
                               flex: 3,
-                              child: Text('\$---')),
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 4.0),
+                                child: Text('\$---/hr',
+                                textAlign: TextAlign.end,),
+                              )),
                         ],
                       ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                            flex: 7,
-                            child: Text('Hourly Rate:')),
-                        Expanded(
-                            flex: 3,
-                            child: Text('\$---/hr')),
-                      ],
                     ),
                   ],
                 ),
@@ -311,6 +298,13 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
           ),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: Text("EDIT"),
+              onPressed: () {
+                // Edit functions
+                
+              },
+            ),
             FlatButton(
               child: Text("OK"),
               onPressed: () {
@@ -324,47 +318,12 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
   }
 
   _getTipOutAmounts(Map shiftRecord){
+    print("_getTipOutAmounts: shiftRecord passed: " + shiftRecord.toString());
     if(shiftRecord['shift_data']['tips'].containsKey('tip_out_amounts')){
+      print("_getTipOutAmounts: returning tipOutAmount: " + shiftRecord['shift_data']['tips']['tip_out_amounts'].toString());
       return shiftRecord['shift_data']['tips']['tip_out_amounts'];
     }
-    return {};
-  }
-
-  _buildTipOutListView(DateTime date, Map tipOutAmounts){
-    final ScrollController _scrollController = ScrollController();
-
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-                controller: _scrollController,
-                shrinkWrap: true,
-                itemCount: tipOutAmounts.length,
-                itemBuilder: (context, index){
-                  String key = tipOutAmounts.keys.elementAt(index);
-                  return Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 4,
-                        child: Text(tipOutAmounts[key]['position']['title']),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text('(' + tipOutAmounts[key]['position']['name'] + ')'),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text('\$' + tipOutAmounts[key]['tip_out_amount']),
-                      ),
-                    ],
-                  );
-                }),
-          ),
-        ],
-      ),
-    );
+    return null;
   }
 
   Widget _buildEventsMarker(DateTime date, List events) {
@@ -391,29 +350,27 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
     );
   }
 
-  Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map((event) => Container(
-//        decoration: BoxDecoration(
-//          border: Border.all(width: 0.8),
-//          borderRadius: BorderRadius.circular(12.0),
-//        ),
-        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        child: Card(
-          child: ExpansionTile(
-              title: Text(event.toString()),
-              children: <Widget>[
-                Text("More Text"),
-                Text("More Text"),
-                Text("More Text")
-              ],
-            ),
-        )
-      ))
-          .toList(),
-    );
-  }
-
-
+//  Widget _buildEventList() {
+//    return ListView(
+//      children: _selectedEvents
+//          .map((event) => Container(
+////        decoration: BoxDecoration(
+////          border: Border.all(width: 0.8),
+////          borderRadius: BorderRadius.circular(12.0),
+////        ),
+//        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+//        child: Card(
+//          child: ExpansionTile(
+//              title: Text(event.toString()),
+//              children: <Widget>[
+//                Text("More Text"),
+//                Text("More Text"),
+//                Text("More Text")
+//              ],
+//            ),
+//        )
+//      ))
+//          .toList(),
+//    );
+//  }
 }
