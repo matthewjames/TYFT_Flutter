@@ -251,7 +251,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 fontSize: 18.0
-                              )
+                              ),
                           ),
                       ),
                       Padding(
@@ -265,12 +265,12 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Ink(
                                   decoration: ShapeDecoration(
-                                    color: Colors.yellow[100],
+                                    color: Colors.yellow[700],
                                     shape: CircleBorder(
-                                      side: BorderSide(
-                                        color: Colors.yellow[700],
-                                        width: 3.0
-                                      )
+//                                      side: BorderSide(
+//                                        color: Colors.yellow[700],
+//                                          width: 3.0
+//                                      )
                                     )
                                   ),
                                   child: IconButton(
@@ -279,7 +279,8 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                         grossTipsController.text = '';
                                       },
                                       icon: Icon(Icons.refresh,
-                                      size: 30.0,),
+                                      size: 30.0,
+                                      color: Colors.white,),
                                     tooltip: 'Clear all entries and reset calculator',
                                   ),
                                 ),
@@ -292,12 +293,12 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Ink(
                                   decoration: ShapeDecoration(
-                                    color: Colors.orange[100],
+                                    color: Colors.orange[700],
                                       shape: CircleBorder(
-                                          side: BorderSide(
-                                              color: Colors.orange[300],
-                                              width: 3.0
-                                          )
+//                                          side: BorderSide(
+//                                              color: Colors.orange[300],
+//                                              width: 3.0
+//                                          )
                                       )
                                   ),
                                   child: IconButton(
@@ -306,7 +307,8 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                     },
                                     icon: Icon(
                                         MdiIcons.calculator,
-                                    size: 30.0),
+                                    size: 30.0,
+                                    color: Colors.white),
                                     tooltip: 'Calculate tip outs',
                                   ),
                                 ),
@@ -319,12 +321,12 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Ink(
                                   decoration: ShapeDecoration(
-                                      color: Colors.green[100],
+                                      color: Colors.green[500],
                                       shape: CircleBorder(
-                                          side: BorderSide(
-                                              color: Colors.green[400],
-                                              width: 3.0
-                                          )
+//                                          side: BorderSide(
+//                                              color: Colors.green[400],
+//                                              width: 3.0
+//                                          )
                                       )
                                   ),
                                   child: IconButton(
@@ -346,7 +348,8 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                                     },
                                     icon: Icon(
                                         MdiIcons.fileDocumentEditOutline,
-                                    size: 30.0,),
+                                    size: 30.0,
+                                    color: Colors.white),
                                     tooltip: 'Log tip information',
                                   ),
                                 ),

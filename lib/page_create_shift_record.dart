@@ -325,12 +325,12 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Ink(
                           decoration: ShapeDecoration(
-                              color: Colors.red[100],
+                              color: Colors.red[500],
                               shape: CircleBorder(
-                                  side: BorderSide(
-                                      color: Colors.red[700],
-                                      width: 3.0
-                                  )
+//                                  side: BorderSide(
+//                                      color: Colors.red[700],
+//                                      width: 3.0
+//                                  )
                               )
                           ),
                           child: IconButton(
@@ -338,7 +338,8 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                               Navigator.of(context).pop();
                             },
                             icon: Icon(MdiIcons.trashCanOutline,
-                              size: 30.0,),
+                              size: 30.0,
+                            color: Colors.white),
                             tooltip: 'Cancel',
                           ),
                         ),
@@ -351,12 +352,12 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Ink(
                           decoration: ShapeDecoration(
-                              color: Colors.green[100],
+                              color: Colors.green[500],
                               shape: CircleBorder(
-                                  side: BorderSide(
-                                      color: Colors.green[700],
-                                      width: 3.0
-                                  )
+//                                  side: BorderSide(
+//                                      color: Colors.green[700],
+//                                      width: 3.0
+//                                  )
                               )
                           ),
                           child: IconButton(
@@ -364,7 +365,9 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                               _saveTipRecordToFirebase(data);
                             },
                             icon: Icon(MdiIcons.filePlusOutline,
-                              size: 30.0,),
+                              size: 30.0,
+                              color: Colors.white
+                            ),
                             tooltip: 'Save',
                           ),
                         ),

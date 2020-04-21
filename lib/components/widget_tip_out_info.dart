@@ -48,6 +48,14 @@ class _TipOutInfoWidgetState extends State<TipOutInfoWidget> {
     print("widget.tipOutAmounts.length = " + length.toString());
 
     for(int i = 0; i < length; i++){
+      String name = widget.tipOutAmounts[i]['position']['name'];
+      Widget nameWidget;
+
+      if(name == ''){
+        nameWidget = Text('');
+      } else {
+        nameWidget = Text('(' + name + ')');
+      }
 
       positionWidgets.add(Row(
         children: <Widget>[
@@ -57,7 +65,7 @@ class _TipOutInfoWidgetState extends State<TipOutInfoWidget> {
           ),
           Expanded(
             flex: 4,
-            child: Text('(' + widget.tipOutAmounts[i]['position']['name'] + ')'),
+            child: nameWidget,
           ),
           Expanded(
             flex: 2,
