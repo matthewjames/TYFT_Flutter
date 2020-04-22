@@ -223,147 +223,179 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                   itemCount: _positions.length,
               ),
               Center(
-                child: OutlineButton(
-                  onPressed: (){
-                    _showPositionEditorDialog('Add a position');
-                  },
-                  child: Text('+ Quick Add'),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: OutlineButton(
+                    onPressed: (){
+                      _showPositionEditorDialog('Add a position');
+                    },
+                    child: Text('+ Quick Add'),
+                  ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 32.0, left: 32.0, top: 8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.all(4.0),
-                        child:
-                          Text('Total Tip Out: -\$$_totalTipOut',
+                padding: const EdgeInsets.only(right: 12.0, top: 8.0),
+                child: Row(children: <Widget>[
+                  Expanded(
+                    flex: 9,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: Text('Total Tip Out:',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            fontSize: 18.0
+                        )
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0, left: 4.0),
+                        child: Text('-\$$_totalTipOut',
+                        style: TextStyle(
+                          color: Colors.red[500],
+                          fontSize: 18.0
+                        )),
+                      )
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0, top: 8.0),
+                child: Row(children: <Widget>[
+                  Expanded(
+                    flex: 9,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: Text('Take Home:',
                           textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  fontSize: 18.0
-                              )
-                          ),
+                          style: TextStyle(
+                              fontSize: 18.0,
+                            fontWeight: FontWeight.bold
+                          )
                       ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.all(4.0),
-                        child:
-                          Text('Take Home:  \$$_netGratuity',
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                fontSize: 18.0
-                              ),
-                          ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                height: buttonBoxSize,
-                                width: buttonBoxSize,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Ink(
-                                  decoration: ShapeDecoration(
-                                    color: Colors.yellow[700],
-                                    shape: CircleBorder(
+                    ),
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0, right: 4.0),
+                        child: Text('\$$_netGratuity',
+                            style: TextStyle(
+                                color: Colors.green[500],
+                                fontSize: 18.0,
+                              fontWeight: FontWeight.bold
+                            )),
+                      )
+                  )
+                ],),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 32.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        height: buttonBoxSize,
+                        width: buttonBoxSize,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Ink(
+                          decoration: ShapeDecoration(
+                              color: Colors.yellow[700],
+                              shape: CircleBorder(
 //                                      side: BorderSide(
 //                                        color: Colors.yellow[700],
 //                                          width: 3.0
 //                                      )
-                                    )
-                                  ),
-                                  child: IconButton(
-                                      onPressed: (){
-                                        _calculate(0);
-                                        grossTipsController.text = '';
-                                      },
-                                      icon: Icon(Icons.refresh,
-                                      size: 30.0,
-                                      color: Colors.white,),
-                                    tooltip: 'Clear all entries and reset calculator',
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: buttonBoxSize,
-                                width: buttonBoxSize,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Ink(
-                                  decoration: ShapeDecoration(
-                                    color: Colors.orange[700],
-                                      shape: CircleBorder(
+                              )
+                          ),
+                          child: IconButton(
+                            onPressed: (){
+                              _calculate(0);
+                              grossTipsController.text = '';
+                            },
+                            icon: Icon(Icons.refresh,
+                              size: 30.0,
+                              color: Colors.white,),
+                            tooltip: 'Clear all entries and reset calculator',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: buttonBoxSize,
+                        width: buttonBoxSize,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Ink(
+                          decoration: ShapeDecoration(
+                              color: Colors.orange[700],
+                              shape: CircleBorder(
 //                                          side: BorderSide(
 //                                              color: Colors.orange[300],
 //                                              width: 3.0
 //                                          )
-                                      )
-                                  ),
-                                  child: IconButton(
-                                    onPressed: (){
-                                      _calculate(int.parse(grossTipsController.text));
-                                    },
-                                    icon: Icon(
-                                        MdiIcons.calculator,
-                                    size: 30.0,
-                                    color: Colors.white),
-                                    tooltip: 'Calculate tip outs',
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: buttonBoxSize,
-                                width: buttonBoxSize,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Ink(
-                                  decoration: ShapeDecoration(
-                                      color: Colors.green[500],
-                                      shape: CircleBorder(
+                              )
+                          ),
+                          child: IconButton(
+                            onPressed: (){
+                              _calculate(int.parse(grossTipsController.text));
+                            },
+                            icon: Icon(
+                                MdiIcons.calculator,
+                                size: 30.0,
+                                color: Colors.white),
+                            tooltip: 'Calculate tip outs',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: buttonBoxSize,
+                        width: buttonBoxSize,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Ink(
+                          decoration: ShapeDecoration(
+                              color: Colors.green[500],
+                              shape: CircleBorder(
 //                                          side: BorderSide(
 //                                              color: Colors.green[400],
 //                                              width: 3.0
 //                                          )
-                                      )
-                                  ),
-                                  child: IconButton(
-                                    onPressed: (){
-                                      _shiftData = {
-                                        "date_time_created" : DateTime.now().toIso8601String(),
-                                        "shift_data" : {
-                                          "tips" : {
-                                            "tip_out_amounts" : tipOutAmounts,
-                                            "take_home" : _netGratuity.toString(),
-                                            "claimed" : "0"
-                                          },
-                                          "shift_note" : ""
-                                        }
-                                      };
+                              )
+                          ),
+                          child: IconButton(
+                            onPressed: (){
+                              _shiftData = {
+                                "date_time_created" : DateTime.now().toIso8601String(),
+                                "shift_data" : {
+                                  "tips" : {
+                                    "tip_out_amounts" : tipOutAmounts,
+                                    "take_home" : _netGratuity.toString(),
+                                    "claimed" : "0"
+                                  },
+                                  "shift_note" : ""
+                                }
+                              };
 
-                                      print('TipOutCalcuPage: data sent to CreateShiftRecordPage: \n' + _shiftData.toString());
-                                      _openCreateShiftRecordPage(context);
-                                    },
-                                    icon: Icon(
-                                        MdiIcons.fileDocumentEditOutline,
-                                    size: 30.0,
-                                    color: Colors.white),
-                                    tooltip: 'Log tip information',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                              print('TipOutCalcuPage: data sent to CreateShiftRecordPage: \n' + _shiftData.toString());
+                              _openCreateShiftRecordPage(context);
+                            },
+                            icon: Icon(
+                                MdiIcons.fileDocumentEditOutline,
+                                size: 30.0,
+                                color: Colors.white),
+                            tooltip: 'Log tip information',
+                          ),
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
+              )
             ],
           ),
         ),
