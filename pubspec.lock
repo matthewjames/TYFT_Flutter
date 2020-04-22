@@ -164,6 +164,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.0"
+  flutter_picker:
+    dependency: "direct dev"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: c7e2a48d5d0907c853e29a113e6b77f66bedce01
+      url: "git://github.com/yangyxd/flutter_picker.git"
+    source: git
+    version: "1.1.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 class CreateShiftRecordPage extends StatefulWidget {
   CreateShiftRecordPage({Key key, this.title, this.data}) : super(key: key);
@@ -18,6 +19,7 @@ class CreateShiftRecordPage extends StatefulWidget {
 class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
   final DatabaseReference _firebaseRef = FirebaseDatabase.instance.reference();
   static DateTime now = DateTime.now();
+  static TimeOfDay _selectedTime;
   static DateTime _selectedDate = _getBeginningOfDay(now);
   String path;
 
@@ -42,7 +44,61 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
     });
   }
 
+  Future<Null> _selectTime(BuildContext context, TextEditingController editingController) async {
+    final TimeOfDay time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        );
+    if (time != null && time != _selectedTime)
+
+
+    setState(() {
+      DateTime timeToFormat = DateTime(1969, 1, 1, time.hour, time.minute);
+      editingController.text = DateFormat.jm().format(timeToFormat);
+    });
+  }
+
+  _showPickerNumber(BuildContext context) {
+    new Picker(
+        columnPadding: EdgeInsets.all(8.0),
+        adapter: NumberPickerAdapter(data: [
+          NumberPickerColumn(begin: 0, end: 999),
+        ]),
+        delimiter: [
+          PickerDelimiter(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: 100.0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('Minutes',
+                        textAlign: TextAlign.end,
+                      style: Theme.of(context).textTheme.title
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          )
+        ],
+        hideHeader: true,
+        title: new Text("Break Time Taken"),
+        confirmText: 'CONFIRM',
+        cancelText: 'CANCEL',
+        onConfirm: (Picker picker, List value) {
+          num minutes = value[0]/60;
+          setState(() {
+            _breakTimeTextController.text = minutes.toStringAsFixed(2);
+          });
+        }
+    ).showDialog(context);
+  }
+
   _saveTipRecordToFirebase(Map data) {
+    
+
     var timeCard = {
       "time_card": {
         "clock_in": _clockInTextController.text.toString() == ""
@@ -233,12 +289,20 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child: TextField(
-                        controller: _clockInTextController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Clock-In Time',
+                      child: InkWell(
+                        onTap: (){
+                          print("Clock-In TextField tapped!");
+                          _selectTime(context, _clockInTextController);
+                          },
+                        child: IgnorePointer(
+                          child: TextField(
+                            controller: _clockInTextController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Clock-In Time',
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -252,12 +316,20 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child: TextField(
-                        controller: _clockOutTextController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Clock-Out Time',
+                      child: InkWell(
+                        onTap: (){
+                          print("Clock-In TextField tapped!");
+                          _selectTime(context, _clockOutTextController);
+                        },
+                        child: IgnorePointer(
+                          child: TextField(
+                            controller: _clockOutTextController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Clock-Out Time',
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -271,12 +343,19 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child: TextField(
-                        controller: _breakTimeTextController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Break Time',
+                      child: InkWell(
+                        onTap: (){
+                          _showPickerNumber(context);
+                        },
+                        child: IgnorePointer(
+                          child: TextField(
+                            controller: _breakTimeTextController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Break Time',
+                            ),
+                          ),
                         ),
                       ),
                     ),
