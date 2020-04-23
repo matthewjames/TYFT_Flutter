@@ -14,11 +14,12 @@ class TipOutCalculatorPage extends StatefulWidget {
 }
 
 class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
-  var _positions = [
+  static var _positions = [
     new Position("Busser", "", 20.0),
     new Position("Bar", "", 7.5),
     new Position("Runner", "", 5.0)
   ];
+  var _selectedPosition = _positions[0];
 
   var _totalTipOut = 0, _netGratuity = 0;
   var _shiftData;
@@ -78,31 +79,70 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
         return AlertDialog(
           title: Text(title),
           content: Container(
-            height: 100,
+            height: 225,
             child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Expanded(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextField(
-                            autofocus: false,
-                            decoration: InputDecoration(
-                              labelText: 'Tip Out %',
-                            ),
-                            onChanged: (value){
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[Container(
+                            width: 100,
+                            height: 80,
+                            child: TextField(
+                                autofocus: false,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Tip Out %',
+                                  labelStyle: TextStyle(
+                                    fontSize: 16.0
+                                  )
+                                ),
+                                style: TextStyle(
+                                  fontSize: 30.0
+                                ),
+                                textAlign: TextAlign.center,
+                                onChanged: (value){
 
-                            },
+                                },
+                              ),
+                            ),
+                          ]
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      elevation: 0,
+                                      items: _positions.map<DropdownMenuItem<Position>>((Position value) {
+                                      return DropdownMenuItem<Position>(
+                                          value: value,
+                                          child: Text(value.title),
+                                        );
+                                      }).toList(),
+                                      onChanged: (position){
+                                        _selectedPosition = position;
+                                      },
+                                      value: _selectedPosition,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                        Expanded(
-                          child: DropdownButton(
-                            items: null,
-                            onChanged: null,
-                          ),
-                        )
-                      ],
+
+
+                  TextField(
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Name (Optional)',
                     ),
+                    onChanged: (value){
+
+                    },
                   ),
                 ],
             ),
@@ -110,7 +150,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
-              child: Text("Cancel"),
+              child: Text("CANCEL"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -178,50 +218,7 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
                   ),
                 ],
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                  itemBuilder: (context, position) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                      child: Card(
-                        child: InkWell(
-                          splashColor: Colors.black12.withAlpha(30),
-                          onTap: (){
-                            print("Position " + position.toString() + " clicked!");
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(16),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                    child: Text(_positions[position].tipPercentage.toString() + '%',
-                                    style: TextStyle(
-                                      fontSize: 18.0
-                                    ),)
-                                ),
-                                Expanded(child: Text(_positions[position].title,
-                                  style: TextStyle(
-                                      fontSize: 18.0
-                                  ),)),
-                                Expanded(child: Text(_getName(position),
-                                  style: TextStyle(
-                                      fontSize: 18.0
-                                  ),)),
-                                Expanded(child: Text('\$' + _positions[position].tipOutAmount.toString(),
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                          fontSize: 18.0
-                                        ),),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: _positions.length,
-              ),
+              _buildPositionListView(),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -400,6 +397,78 @@ class _TipOutCalculatorPageState extends State<TipOutCalculatorPage> {
           ),
         ),
       ),
+    );
+  }
+
+  _buildPositionListView(){
+    return ListView.builder(
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        final position = _positions[index];
+        return Padding(
+          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          child: Dismissible(
+            key: ObjectKey(position),
+            onDismissed: (direction){
+              setState(() {
+                _positions.removeAt(index);
+              });
+              Scaffold
+                  .of(context)
+                  .showSnackBar(SnackBar(
+                  content: Text(position.title + " removed."),
+                      action: SnackBarAction(
+                        label: 'UNDO',
+                        onPressed: (){
+                          setState(() {
+                            _positions.insert(index, position);
+                          });
+                        },
+                      ),
+                ),
+              );
+            },
+            child: Card(
+              child: InkWell(
+                splashColor: Colors.black12.withAlpha(30),
+                onTap: (){
+                  print("Position " + index.toString() + " clicked!");
+                  _selectedPosition = _positions[index];
+                  _showPositionEditorDialog('Edit Position');
+                },
+                child: Container(
+                  margin: EdgeInsets.all(16),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: Text(_positions[index].tipPercentage.toString() + '%',
+                            style: TextStyle(
+                                fontSize: 18.0
+                            ),)
+                      ),
+                      Expanded(child: Text(_positions[index].title,
+                        style: TextStyle(
+                            fontSize: 18.0
+                        ),)),
+                      Expanded(child: Text(_getName(index),
+                        style: TextStyle(
+                            fontSize: 18.0
+                        ),)),
+                      Expanded(child: Text('\$' + _positions[index].tipOutAmount.toString(),
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            fontSize: 18.0
+                        ),),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      itemCount: _positions.length,
     );
   }
 

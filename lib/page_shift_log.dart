@@ -71,7 +71,7 @@ class _ShiftLogPageState extends State<ShiftLogPage> {
         title: Text(widget.title),
       ),
         body: Column(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(child: _buildTableCalendar())

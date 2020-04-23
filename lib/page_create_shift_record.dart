@@ -97,7 +97,7 @@ class _CreateShiftRecordPageState extends State<CreateShiftRecordPage> {
   }
 
   _saveTipRecordToFirebase(Map data) {
-    
+
 
     var timeCard = {
       "time_card": {
